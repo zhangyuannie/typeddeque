@@ -12,8 +12,10 @@ export class Uint8Deque {
   }
 
   constructor(array?: Uint8Array) {
-    if (array) {
+    if (array instanceof Uint8Array) {
       this.push(array);
+    } else if (typeof array !== "undefined") {
+      throw new TypeError("The provided value is not of type 'Uint8Array'");
     }
   }
 
@@ -40,6 +42,9 @@ export class Uint8Deque {
    * @param array elements to add to the end of the `Uint8Deque`
    */
   push(array: Uint8Array): number {
+    if (!(array instanceof Uint8Array)) {
+      throw new TypeError("The provided value is not of type 'Uint8Array'");
+    }
     this.#chunks.push(array);
     this.#length += array.length;
     return this.#length;

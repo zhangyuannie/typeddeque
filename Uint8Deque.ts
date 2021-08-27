@@ -65,7 +65,7 @@ export class Uint8Deque {
       return undefined;
     }
 
-    const [chunkIdx, offset] = this.chunkAt(searchIdx);
+    const [chunkIdx, offset] = this._chunkAt(searchIdx);
     return this.#chunks[chunkIdx][searchIdx - offset];
   }
 
@@ -147,8 +147,8 @@ export class Uint8Deque {
       return ret;
     }
 
-    const [startIndex, startOffset] = this.chunkAt(start);
-    const [endIndex, endOffset] = this.chunkAt(end);
+    const [startIndex, startOffset] = this._chunkAt(start);
+    const [endIndex, endOffset] = this._chunkAt(end - 1);
 
     if (startIndex === endIndex) {
       // same underlying chunk
@@ -172,7 +172,44 @@ export class Uint8Deque {
     return ret;
   }
 
-  private chunkAt(i: number): [index: number, offset: number] {
+  /**
+   * Returns the first index at which a given element can be found in the
+   * `Uint8Deque`, or -1 if it is not present.
+   * @param searchElement Element to locate
+   * @param fromIndex The index to start the search at, defaults to `0`.
+   *     A negative index can be used, indicating an offset from the end.
+   */
+  indexOf(searchElement: number, fromIndex = 0): number {
+    if (fromIndex < 0) {
+      fromIndex += this.#length;
+    }
+    if (fromIndex >= this.#length) {
+      return -1;
+    }
+
+    let offset = 0;
+    for (let i = 0; i < this.#chunks.length; i++) {
+      const startIdx = Math.max(fromIndex - offset, 0);
+      const idx = this.#chunks[i].indexOf(searchElement, startIdx);
+      if (idx >= 0) {
+        return offset + idx;
+      }
+      offset += this.#chunks[i].length;
+    }
+    return -1;
+  }
+
+  /**
+   * Determines whether a `Uint8Deque` includes a certain element.
+   * @param searchElement Element to search for
+   * @param fromIndex The index to start the search at, defaults to `0`.
+   *     A negative index can be used, indicating an offset from the end.
+   */
+  includes(searchElement: number, fromIndex = 0): boolean {
+    return this.indexOf(searchElement, fromIndex) >= 0;
+  }
+
+  private _chunkAt(i: number): [index: number, offset: number] {
     let chunkIdx = 0;
     let offset = 0;
     while (offset + this.#chunks[chunkIdx].length <= i) {

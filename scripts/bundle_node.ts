@@ -3,6 +3,7 @@ import {
   fromFileUrl,
   dirname,
 } from "https://deno.land/std@0.106.0/path/mod.ts";
+import manifest from "../_manifest.ts";
 
 const rootDir = `${dirname(fromFileUrl(import.meta.url))}/..`;
 const outDir = `${rootDir}/dist`;
@@ -34,8 +35,8 @@ removeFromFile(`${outDir}/mod.js`, ".ts");
 removeFromFile(`${outDir}/mod.d.ts`, ".ts");
 
 const packageJson = {
-  name: "typeddeque",
-  version: "0.1.0",
+  name: manifest.name,
+  version: manifest.version,
   description: "Variable length TypedArray",
   main: "mod.js",
   repository: {
@@ -44,7 +45,7 @@ const packageJson = {
   },
   keywords: ["arraybuffer", "buffer", "uint8array", "queue", "deque", "tcp"],
   author: "Zhangyuan Nie",
-  license: "MIT",
+  license: manifest.license,
   bugs: {
     url: "https://github.com/zhangyuannie/typeddeque/issues",
   },

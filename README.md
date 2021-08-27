@@ -7,3 +7,5 @@ that is implemented with an array of TypedArray.
 - Work in browser, Node.js and Deno
 - Support TypeScript out of the box
 - Ideal to parse chunks of binary data
+
+[API documentation](https://doc.deno.land/https/deno.land/x/typeddeque/mod.ts)

@@ -9,7 +9,11 @@ const outDir = `${rootDir}/dist`;
 
 const src: string[] = [];
 for (const entry of Deno.readDirSync(rootDir)) {
-  if (entry.isFile && entry.name.endsWith(".ts")) {
+  if (
+    entry.isFile &&
+    entry.name.endsWith(".ts") &&
+    !entry.name.endsWith(".test.ts")
+  ) {
     src.push(entry.name);
   }
 }
@@ -54,3 +58,5 @@ Deno.writeTextFileSync(
   `${outDir}/package.json`,
   `${JSON.stringify(packageJson, undefined, 2)}\n`,
 );
+
+Deno.copyFileSync(`${rootDir}/LICENSE`, `${outDir}/LICENSE`);

@@ -9,11 +9,13 @@ const rootDir = `${dirname(fromFileUrl(import.meta.url))}/..`;
 const outDir = `${rootDir}/dist`;
 
 const src: string[] = [];
+const excludes = new Set(["_manifest.ts"]);
 for (const entry of Deno.readDirSync(rootDir)) {
   if (
     entry.isFile &&
     entry.name.endsWith(".ts") &&
-    !entry.name.endsWith(".test.ts")
+    !entry.name.endsWith(".test.ts") &&
+    !excludes.has(entry.name)
   ) {
     src.push(entry.name);
   }

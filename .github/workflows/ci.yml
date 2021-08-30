@@ -26,3 +26,13 @@ jobs:
 
       - name: Test
         run: deno test
+
+      - name: Generate coverage report
+        run: |
+          deno test --coverage=./cov --unstable
+          deno coverage --unstable --lcov ./cov > lcov.info
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        with:
+          files: lcov.info

@@ -9,6 +9,7 @@ const rootDir = `${dirname(fromFileUrl(import.meta.url))}/..`;
 const outDir = `${rootDir}/dist`;
 
 const src: string[] = [];
+const includes = new Set(["README.md", "LICENSE"]);
 const excludes = new Set(["_manifest.ts"]);
 for (const entry of Deno.readDirSync(rootDir)) {
   if (
@@ -62,4 +63,6 @@ Deno.writeTextFileSync(
   `${JSON.stringify(packageJson, undefined, 2)}\n`,
 );
 
-Deno.copyFileSync(`${rootDir}/LICENSE`, `${outDir}/LICENSE`);
+for (const path of includes) {
+  Deno.copyFileSync(`${rootDir}/${path}`, `${outDir}/${path}`);
+}

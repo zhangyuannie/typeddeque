@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --allow-all
 import {
-  fromFileUrl,
   dirname,
+  fromFileUrl,
 } from "https://deno.land/std@0.106.0/path/mod.ts";
 import manifest from "../_manifest.ts";
 
@@ -24,7 +24,8 @@ for (const entry of Deno.readDirSync(rootDir)) {
 
 await Deno.remove(outDir, { recursive: true }).catch(() => {});
 
-const compileCmd = `npx -p typescript tsc -t ESNEXT -m commonjs --strict -d --outDir ${outDir}`;
+const compileCmd =
+  `npx -p typescript tsc -t ESNEXT -m commonjs --strict -d --outDir ${outDir}`;
 const compile = Deno.run({ cmd: [...compileCmd.split(" "), ...src] });
 await compile.status();
 

@@ -1,6 +1,6 @@
 import {
-  assertThrows,
   assertEquals,
+  assertThrows,
 } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { Uint8Deque } from "./Uint8Deque.ts";
 

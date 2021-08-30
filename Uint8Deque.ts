@@ -153,7 +153,9 @@ export class Uint8Deque {
     if (startIndex === endIndex) {
       // same underlying chunk
       const chunk = this.#chunks[startIndex];
-      return chunk.slice(start - startOffset, end - startOffset);
+      // TypedArray.prototype.slice is incompatible with Buffer,prototype.slice
+      ret.set(chunk.subarray(start - startOffset, end - startOffset));
+      return ret;
     }
 
     const startSection = this.#chunks[startIndex].subarray(start - startOffset);

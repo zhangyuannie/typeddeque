@@ -211,6 +211,10 @@ export class Uint8Deque {
     return this.indexOf(searchElement, fromIndex) >= 0;
   }
 
+  toString(): string {
+    return `Uint8Deque(${this.#length}) [${this.length ? " ... " : ""}]`;
+  }
+
   private _chunkAt(i: number): [index: number, offset: number] {
     let chunkIdx = 0;
     let offset = 0;

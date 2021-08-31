@@ -228,3 +228,10 @@ Deno.test("shift single value", () => {
     shift();
   }
 });
+
+Deno.test("toString", () => {
+  const dq = new Uint8Deque();
+  assertEquals(dq.toString(), "Uint8Deque(0) []");
+  const dq2 = new Uint8Deque(new Uint8Array([1, 2]));
+  assertEquals(dq2.toString(), "Uint8Deque(2) [ ... ]");
+});

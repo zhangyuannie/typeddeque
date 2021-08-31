@@ -3,6 +3,7 @@ import {
   dirname,
   fromFileUrl,
 } from "https://deno.land/std@0.106.0/path/mod.ts";
+import * as esbuild from "https://deno.land/x/esbuild@v0.12.24/mod.js";
 import manifest from "../_manifest.ts";
 
 const rootDir = `${dirname(fromFileUrl(import.meta.url))}/..`;
@@ -38,11 +39,26 @@ function removeFromFile(path: string, toRemove: string) {
 removeFromFile(`${outDir}/mod.js`, ".ts");
 removeFromFile(`${outDir}/mod.d.ts`, ".ts");
 
+// write esm bundle
+await esbuild.build({
+  entryPoints: [`${rootDir}/mod.ts`],
+  bundle: true,
+  format: "esm",
+  outfile: `${outDir}/mod.esm.js`,
+});
+esbuild.stop();
+
 const packageJson = {
   name: manifest.name,
   version: manifest.version,
   description: "Variable length TypedArray",
-  main: "mod.js",
+  main: "./mod.js",
+  module: "./mod.esm.js",
+  exports: {
+    import: "./mod.esm.js",
+    require: "./mod.js",
+  },
+  types: "./main.d.ts",
   repository: {
     type: "git",
     url: "git+https://github.com/zhangyuannie/typeddeque.git",

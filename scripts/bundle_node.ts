@@ -58,7 +58,7 @@ const packageJson = {
     import: "./mod.esm.js",
     require: "./mod.js",
   },
-  types: "./main.d.ts",
+  types: "./mod.d.ts",
   repository: {
     type: "git",
     url: "git+https://github.com/zhangyuannie/typeddeque.git",

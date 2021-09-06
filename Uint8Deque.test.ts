@@ -273,6 +273,24 @@ Deno.test("set", () => {
   assertEquals(count, 46);
 });
 
+Deno.test("@@iterator", () => {
+  const testdata = [[[1, 2, 3, 4, 5]], [[1, 2, 3], [4], [5, 6, 7]]];
+  for (const targets of testdata) {
+    const buffer = new Uint8Deque();
+    targets.forEach((t) => buffer.push(new Uint8Array(t)));
+    const array = new Uint8Array(targets.flat());
+    const received = [];
+    const expected = [];
+    for (const elem of buffer) {
+      received.push(elem);
+    }
+    for (const elem of array) {
+      expected.push(elem);
+    }
+    assertEquals(received, expected);
+  }
+});
+
 Deno.test("toString", () => {
   const dq = new Uint8Deque();
   assertEquals(dq.toString(), "Uint8Deque(0) []");

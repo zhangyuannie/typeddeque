@@ -29,6 +29,14 @@ export class Uint8Deque {
     return this.#length;
   }
 
+  *[Symbol.iterator]() {
+    for (const chunk of this.#chunks) {
+      for (const elem of chunk) {
+        yield elem;
+      }
+    }
+  }
+
   /** Removes all elements from the `Uint8Deque`. */
   clear(): void {
     this.#chunks = [];

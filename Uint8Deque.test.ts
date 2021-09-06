@@ -229,6 +229,50 @@ Deno.test("shift single value", () => {
   }
 });
 
+Deno.test("set RangeError", () => {
+  const dq = new Uint8Deque(new Uint8Array([1, 2, 3]));
+  dq.set([], 3); // not throw
+  assertThrows(() => {
+    dq.set([1], 3);
+  }, RangeError);
+  assertThrows(() => {
+    dq.set([1, 2], 2);
+  }, RangeError);
+  assertThrows(() => {
+    dq.set([], -1);
+  }, RangeError);
+  assertEquals(dq.slice(), new Uint8Array([1, 2, 3]));
+});
+
+Deno.test("set", () => {
+  const testdata = [
+    { targets: [[1, 2, 3]], source: [10] },
+    { targets: [[1, 2, 3, 4]], source: [10, 11] },
+    { targets: [[1, 2, 3, 4], [5, 6, 7], [8]], source: [10] },
+    { targets: [[1, 2, 3, 4], [5, 6, 7], [8]], source: [10, 11] },
+    { targets: [[1, 2], [5, 6], [8]], source: [10, 11, 12, 13] },
+  ];
+  let count = 0;
+  for (const { targets, source } of testdata) {
+    Object.freeze(source);
+    targets.forEach(Object.freeze);
+    for (const useTypedArray of [true, false]) {
+      const end = targets.flat().length - source.length + 1;
+      for (let i = 0; i < end; i++) {
+        const buffer = new Uint8Deque();
+        targets.forEach((t) => buffer.push(new Uint8Array(t)));
+        const array = new Uint8Array(targets.flat());
+        const srcArr = useTypedArray ? new Uint8Array(source) : source;
+        array.set(srcArr, i);
+        buffer.set(srcArr, i);
+        assertEquals(buffer.slice(), array);
+        count++;
+      }
+    }
+  }
+  assertEquals(count, 46);
+});
+
 Deno.test("toString", () => {
   const dq = new Uint8Deque();
   assertEquals(dq.toString(), "Uint8Deque(0) []");

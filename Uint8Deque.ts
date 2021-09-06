@@ -153,7 +153,7 @@ export class Uint8Deque {
     if (startIndex === endIndex) {
       // same underlying chunk
       const chunk = this.#chunks[startIndex];
-      // TypedArray.prototype.slice is incompatible with Buffer,prototype.slice
+      // TypedArray.prototype.slice is incompatible with Buffer.prototype.slice
       ret.set(chunk.subarray(start - startOffset, end - startOffset));
       return ret;
     }
@@ -209,6 +209,49 @@ export class Uint8Deque {
    */
   includes(searchElement: number, fromIndex = 0): boolean {
     return this.indexOf(searchElement, fromIndex) >= 0;
+  }
+
+  /**
+   * Copy the content of an array into the `Uint8Deque`.
+   * @param array The array fron which to copy values.
+   * @param offset The offset into the `Uint8Deque` at which to begin writing
+   *     values.
+   * @throws {RangeError} if the offset is set such as it would store beyond the
+   *     end of the `Uint8Deque`.
+   */
+  set(array: number[] | Uint8Array, offset = 0) {
+    if (offset < 0 || offset + array.length > this.#length) {
+      throw new RangeError("offset is out of bounds");
+    }
+    if (array.length === 0) return;
+
+    let [chunkIdx, chunkOffset] = this._chunkAt(offset);
+    if (offset + array.length < chunkOffset + this.#chunks[chunkIdx].length) {
+      this.#chunks[chunkIdx].set(array, offset - chunkOffset);
+      return;
+    }
+
+    if (!(array instanceof Uint8Array)) {
+      array = new Uint8Array(array);
+    }
+
+    const end = array.length;
+    let pos = chunkOffset + this.#chunks[chunkIdx].length - offset;
+
+    this.#chunks[chunkIdx].set(array.subarray(0, pos), offset - chunkOffset);
+    chunkIdx++;
+
+    while (pos < end) {
+      const chunk = this.#chunks[chunkIdx];
+      if (chunk.length < end - pos) {
+        chunk.set(array.subarray(pos, pos + chunk.length));
+        pos += chunk.length;
+        chunkIdx++;
+      } else {
+        chunk.set(array.subarray(pos));
+        return;
+      }
+    }
   }
 
   toString(): string {

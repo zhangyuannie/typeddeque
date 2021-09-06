@@ -1,5 +1,6 @@
 import {
   assertEquals,
+  assertStrictEquals,
   assertThrows,
 } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { Uint8Deque } from "./Uint8Deque.ts";
@@ -287,6 +288,25 @@ Deno.test("@@iterator", () => {
     for (const elem of array) {
       expected.push(elem);
     }
+    assertEquals(received, expected);
+  }
+});
+
+Deno.test("forEach", () => {
+  const testdata = [[[1, 2, 3, 4, 5]], [[1, 2, 3], [4], [5, 6, 7]]];
+  for (const targets of testdata) {
+    const buffer = new Uint8Deque();
+    targets.forEach((t) => buffer.push(new Uint8Array(t)));
+    const array = new Uint8Array(targets.flat());
+    const received: unknown[] = [];
+    const expected: unknown[] = [];
+    buffer.forEach((val, idx, buf) => {
+      received.push([val, idx]);
+      assertStrictEquals(buffer, buf);
+    });
+    array.forEach((val, idx) => {
+      expected.push([val, idx]);
+    });
     assertEquals(received, expected);
   }
 });

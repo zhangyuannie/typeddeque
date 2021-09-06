@@ -227,7 +227,7 @@ export class Uint8Deque {
    * @throws {RangeError} if the offset is set such as it would store beyond the
    *     end of the `Uint8Deque`.
    */
-  set(array: number[] | Uint8Array, offset = 0) {
+  set(array: number[] | Uint8Array, offset = 0): void {
     if (offset < 0 || offset + array.length > this.#length) {
       throw new RangeError("offset is out of bounds");
     }
@@ -258,6 +258,17 @@ export class Uint8Deque {
       } else {
         chunk.set(array.subarray(pos));
         return;
+      }
+    }
+  }
+
+  forEach(
+    callbackFn: (value: number, index: number, deque: Uint8Deque) => void,
+  ): void {
+    let i = 0;
+    for (const chunk of this.#chunks) {
+      for (const elem of chunk) {
+        callbackFn(elem, i++, this);
       }
     }
   }
